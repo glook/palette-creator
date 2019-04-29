@@ -1,7 +1,7 @@
 {
   "name": "palette-creator",
-  "version": "0.5.1",
-  "main": "dist/index.js",
+  "version": "0.5.2",
+  "main": "dist/paletteGenerator.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --config config/webpack.base.config.js --open --hot --history-api-fallback --env.PLATFORM=local --env.VERSION=stag",
     "prebuild": "webpack --mode production --config config/webpack.prod.config.js --env.PLATFORM=production --env.VERSION=stag --progress",
