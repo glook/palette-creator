@@ -5,3 +5,6 @@ src/index.html
 .eslintrc
 .idea
 .gitignore
+/dist/index.html
+.DS_Store
+/src/index.html

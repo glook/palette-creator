@@ -2,3 +2,5 @@
 /package-lock.json
 /node_modules/
 .idea
+/dist/index.html
+.DS_Store
