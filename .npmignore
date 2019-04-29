@@ -1,0 +1,7 @@
+config
+server
+src/index.html
+.babelrc
+.eslintrc
+.idea
+.gitignore
