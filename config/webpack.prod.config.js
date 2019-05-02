@@ -16,7 +16,7 @@ const prodConfiguration = env => {
                 library: 'paletteGenerator',
                 libraryTarget: 'umd',
                 filename: 'paletteGenerator.js',
-                auxiliaryComment: 'Test Comment'
+                globalObject: 'this'
             },
             mode: 'production',
             // Un-comment this part if you want to use splitChunks. That's all.
