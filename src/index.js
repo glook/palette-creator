@@ -21,26 +21,22 @@ export default class Index {
     static getSimilar = (baseColor) => {
         const color = Index.__getColor(baseColor);
         return {
-            primary: color.hsl()
-                .string(),
-            complementary: color.rotate(180)
-                .hsl()
-                .string(),
+            primary: Index.__getColorObject(color
+                .hex()),
+            complementary:
+                Index.__getColorObject(color.rotate(180)
+                    .hex()),
             analogus: [
-                color.rotate(-30)
-                    .hsl()
-                    .string(),
-                color.rotate(30)
-                    .hsl()
-                    .string(),
+                Index.__getColorObject(color.rotate(-30)
+                    .hex()),
+                Index.__getColorObject(color.rotate(30)
+                    .hex()),
             ],
             triadic: [
-                color.rotate(60)
-                    .hsl()
-                    .string(),
-                color.rotate(120)
-                    .hsl()
-                    .string(),
+                Index.__getColorObject(color.rotate(60)
+                    .hex()),
+                Index.__getColorObject(color.rotate(120)
+                    .hex()),
             ],
         };
     };
@@ -55,8 +51,8 @@ export default class Index {
 
     static __paletteGenerator = (color, shade) => {
         const result = {};
-        const colorShades = Index.__getColorShades();
-        const {s: colorSaturation} = color;
+        const {s: colorSaturation, h: colorHue} = color;
+        const colorShades = Index.__getColorShades(colorHue);
         const saturationRatio = Index.__getColorSaturationRatio(colorSaturation);
         const primaryColorShadeindex = colorShades.findIndex(({group}) => group === shade);
         if (Number.isInteger(primaryColorShadeindex) && saturationRatio) {
@@ -110,48 +106,94 @@ export default class Index {
         }
     };
 
-    static __getColorShades = () => ([
-        {
-            group: 50,
-            brightness: 95,
-        },
-        {
-            group: 100,
-            brightness: 85,
-        },
-        {
-            group: 200,
-            brightness: 75,
-        },
-        {
-            group: 300,
-            brightness: 65,
-        },
-        {
-            group: 400,
-            brightness: 55,
-        },
-        {
-            group: 500,
-            brightness: 45,
-        },
-        {
-            group: 600,
-            brightness: 35,
-        },
-        {
-            group: 700,
-            brightness: 25,
-        },
-        {
-            group: 800,
-            brightness: 20,
-        },
-        {
-            group: 900,
-            brightness: 15,
-        },
-    ]);
+    static __getColorShades = (colorHue) => {
+        if (colorHue <= 190 && colorHue >= 50) {
+            return [
+                {
+                    group: 50,
+                    brightness: 95,
+                },
+                {
+                    group: 100,
+                    brightness: 88,
+                },
+                {
+                    group: 200,
+                    brightness: 79,
+                },
+                {
+                    group: 300,
+                    brightness: 67,
+                },
+                {
+                    group: 400,
+                    brightness: 49,
+                },
+                {
+                    group: 500,
+                    brightness: 45,
+                },
+                {
+                    group: 600,
+                    brightness: 40,
+                },
+                {
+                    group: 700,
+                    brightness: 35,
+                },
+                {
+                    group: 800,
+                    brightness: 25,
+                },
+                {
+                    group: 900,
+                    brightness: 20,
+                },
+            ];
+        }
+        return [
+            {
+                group: 50,
+                brightness: 95,
+            },
+            {
+                group: 100,
+                brightness: 85,
+            },
+            {
+                group: 200,
+                brightness: 75,
+            },
+            {
+                group: 300,
+                brightness: 65,
+            },
+            {
+                group: 400,
+                brightness: 55,
+            },
+            {
+                group: 500,
+                brightness: 45,
+            },
+            {
+                group: 600,
+                brightness: 35,
+            },
+            {
+                group: 700,
+                brightness: 25,
+            },
+            {
+                group: 800,
+                brightness: 20,
+            },
+            {
+                group: 900,
+                brightness: 15,
+            },
+        ];
+    };
 
     static __getNearestColor(baseColor) {
         const hexColor = baseColor.hex();
@@ -172,16 +214,36 @@ export default class Index {
         return array.reduce((min, p) => p[attribute] < min[attribute] ? p : min, array[0]);
     }
 
-    static __getColorObject(_color, group, isPrimary = false) {
+    static __getColorObject(_color, group = null, isPrimary = false) {
         const color = new Color(_color);
-        return {
+
+        const result = {
             hsl: color.hsl()
                 .string(),
             hex: color.hex(),
             rgb: color.rgb()
                 .string(),
-            isPrimary,
-            group,
         };
+        if (group) {
+            return {
+                ...result,
+                contrastColor: Index.__getContrastColor(_color),
+                isPrimary,
+                group,
+            };
+        }
+
+        return result;
+    }
+
+    static __getContrastColor(_color) {
+        const color = new Color(_color);
+        const contrastColor = color.contrast(Color('#000')) > 4.5
+            ? color.mix(Color('#000'), 0.8)
+                .hex()
+            : color.mix(Color('#fff'), 0.8)
+                .hex();
+
+        return Index.__getColorObject(contrastColor);
     }
 }
